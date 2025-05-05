@@ -5,7 +5,6 @@ BotaniCare ist eine mobile Anwendung, die dir hilft, dich um deine Pflanzen zu k
 ## Funktionen
 
 - Pflanzen mit Bildern hinzufügen
-- Pflanzenbilder
 - Pflanzen bearbeiten
 - Pflanzen löschen
 - Pflanzendetails anzeigen
