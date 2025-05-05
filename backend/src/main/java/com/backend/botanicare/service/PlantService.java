@@ -1,41 +1,45 @@
 package com.backend.botanicare.service;
 
 import com.backend.botanicare.model.Plant;
+import com.backend.botanicare.repository.PlantRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlantService {
 
-    private final Map<Long, Plant> plantStorage = new HashMap<>();
-    private long currentId = 1;
+    private final PlantRepository plantRepository;
+
+    public PlantService(PlantRepository plantRepository) {
+        this.plantRepository = plantRepository;
+    }
 
     public List<Plant> getAllPlants() {
-        return new ArrayList<>(plantStorage.values());
+        return plantRepository.findAll();
     }
 
     public Plant getPlantById(Long id) {
-        return plantStorage.get(id);
+        Optional<Plant> plant = plantRepository.findById(id);
+        return plant.orElse(null);
     }
 
     public Plant createPlant(Plant plant) {
-        plant.setId(currentId++);
-        plantStorage.put(plant.getId(), plant);
-        return plant;
+        return plantRepository.save(plant);
     }
 
     public Plant updatePlant(Long id, Plant updatedPlant) {
-        if (!plantStorage.containsKey(id)) {
+        if (!plantRepository.existsById(id)) {
             return null;
         }
         updatedPlant.setId(id);
-        plantStorage.put(id, updatedPlant);
-        return updatedPlant;
+        return plantRepository.save(updatedPlant);
     }
 
     public void deletePlant(Long id) {
-        plantStorage.remove(id);
+        plantRepository.deleteById(id);
     }
 }
+
 
