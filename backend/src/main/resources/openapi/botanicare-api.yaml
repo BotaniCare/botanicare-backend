@@ -1,0 +1,132 @@
+openapi: 3.1.1
+info:
+  title: BotaniCare API
+  description: API zur Verwaltung der Pflanzen in der BotaniCare-App.
+  version: 1.0.0
+paths:
+  /plants:
+    get:
+      summary: Alle Pflanzen abrufen
+      responses:
+        '200':
+          description: Liste aller Pflanzen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plant'
+    post:
+      summary: Eine neue Pflanze erstellen
+      requestBody:
+        description: Die zu erstellende Pflanze
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plant'
+      responses:
+        '201':
+          description: Pflanze erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plant'
+        '400':
+          description: Ungültige Anfrage
+
+  /plants/{id}:
+    get:
+      summary: Eine Pflanze nach ID abrufen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID der abzurufenden Pflanze
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pflanze gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plant'
+        '404':
+          description: Pflanze nicht gefunden
+    put:
+      summary: Eine bestehende Pflanze aktualisieren
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID der zu aktualisierenden Pflanze
+          schema:
+            type: integer
+      requestBody:
+        description: Pflanze mit den aktualisierten Informationen
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plant'
+      responses:
+        '200':
+          description: Pflanze erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plant'
+        '400':
+          description: Ungültige Anfrage
+        '404':
+          description: Pflanze nicht gefunden
+    delete:
+      summary: Eine Pflanze nach ID löschen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID der zu löschenden Pflanze
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Pflanze erfolgreich gelöscht
+        '404':
+          description: Pflanze nicht gefunden
+
+components:
+  schemas:
+    Plant:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Die ID der Pflanze
+        name:
+          type: string
+          description: Der Name der Pflanze
+        type:
+          type: string
+          description: Der Typ der Pflanze
+        location:
+          type: string
+          description: Der Standort der Pflanze
+        waterRequirement:
+          type: string
+          description: Der Wasserbedarf der Pflanze
+        lightLevel:
+          type: string
+          description: Der Lichtbedarf der Pflanze
+        wateringDate:
+          type: string
+          format: date
+          description: Datum der letzten Bewässerung
+        wateringFrequency:
+          type: integer
+          description: Bewässerungshäufigkeit in Tagen
+        image:
+          type: string
+          format: byte
+          description: Ein Bild der Pflanze als Byte-Array (Base64-kodiert)
