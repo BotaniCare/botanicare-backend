@@ -2,7 +2,6 @@ package com.backend.botanicare.service;
 
 import com.backend.botanicare.model.Plant;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service

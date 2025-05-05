@@ -1,13 +1,13 @@
 package com.backend.botanicare.model;
 
 public class Plant {
-    Long id;
-    String name;
-    String art;
-    String raum;
-    String wasserbedarf;
-    String standort;
-    byte[] image;
+   private Long id;
+   private String name;
+   private String art;
+   private String raum;
+   private String wasserbedarf;
+   private String standort;
+   private byte[] image;
 
     public Long getId() {
         return id;
