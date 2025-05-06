@@ -25,6 +25,10 @@ public class PlantController {
 
     @GetMapping("/{id}")
     public Plant getPlantById(@PathVariable Long id) {
+        if (id == null || id <= 0) {
+            System.out.println("Error: Plant ID must be valid.");
+            throw new IllegalArgumentException("Plant ID must be valid.");
+        }
         return plantService.getPlantById(id);
     }
 
@@ -35,6 +39,16 @@ public class PlantController {
                              @RequestParam("wasserbedarf") String wasserbedarf,
                              @RequestParam("standort") String standort,
                              @RequestParam("image") MultipartFile image) throws IOException {
+
+        if (isNullOrEmpty(name) || isNullOrEmpty(art) || isNullOrEmpty(raum) || isNullOrEmpty(wasserbedarf) || isNullOrEmpty(standort)) {
+            System.out.println("Error: All fields must be filled.");
+            throw new IllegalArgumentException("All fields must be filled.");
+        }
+
+        if (image.isEmpty()) {
+            System.out.println("Error: Image is required.");
+            throw new IllegalArgumentException("Image is required.");
+        }
 
         Plant newPlant = new Plant();
         newPlant.setName(name);
@@ -56,6 +70,16 @@ public class PlantController {
                              @RequestParam("standort") String standort,
                              @RequestParam("image") MultipartFile image) throws IOException {
 
+        if (id == null || id <= 0) {
+            System.out.println("Error: Plant ID must be valid.");
+            throw new IllegalArgumentException("Plant ID must be valid.");
+        }
+
+        if (isNullOrEmpty(name) || isNullOrEmpty(art) || isNullOrEmpty(raum) || isNullOrEmpty(wasserbedarf) || isNullOrEmpty(standort)) {
+            System.out.println("Error: All fields must be filled.");
+            throw new IllegalArgumentException("All fields must be filled.");
+        }
+
         Plant updatedPlant = new Plant();
         updatedPlant.setId(id);
         updatedPlant.setName(name);
@@ -70,6 +94,14 @@ public class PlantController {
 
     @DeleteMapping("/{id}")
     public void deletePlant(@PathVariable Long id) {
+        if (id == null || id <= 0) {
+            System.out.println("Error: Plant ID must be valid.");
+            throw new IllegalArgumentException("Plant ID must be valid.");
+        }
         plantService.deletePlant(id);
+    }
+
+    private boolean isNullOrEmpty(String str) {
+        return str == null || str.trim().isEmpty();
     }
 }

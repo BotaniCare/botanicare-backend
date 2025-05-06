@@ -3,7 +3,6 @@ package com.backend.botanicare.service;
 import com.backend.botanicare.model.Plant;
 import com.backend.botanicare.repository.PlantRepository;
 import org.springframework.stereotype.Service;
-import java.util.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,12 @@ public class PlantService {
     }
 
     public List<Plant> getAllPlants() {
-        return plantRepository.findAll();
+        try {
+            return plantRepository.findAll();
+        } catch (Exception e) {
+            System.err.println("Error in getAllPlants: " + e.getMessage());
+            throw new RuntimeException("Error getting the Plants", e);
+        }
     }
 
     public Plant getPlantById(Long id) {
