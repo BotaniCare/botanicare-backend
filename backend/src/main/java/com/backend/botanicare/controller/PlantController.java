@@ -4,7 +4,6 @@ import com.backend.botanicare.model.Plant;
 import com.backend.botanicare.service.PlantService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -24,23 +23,22 @@ public class PlantController {
     }
 
     @GetMapping("/{id}")
-    public Plant getPlantById(@PathVariable Long id) {
-        if (id == null || id <= 0) {
+    public Plant getPlantById(@PathVariable("id") Integer plantId) {
+        if (plantId == null || plantId <= 0) {
             System.out.println("Error: Plant ID must be valid.");
             throw new IllegalArgumentException("Plant ID must be valid.");
         }
-        return plantService.getPlantById(id);
+        return plantService.getPlantById(plantId);
     }
 
     @PostMapping
     public Plant createPlant(@RequestParam("name") String name,
-                             @RequestParam("art") String art,
-                             @RequestParam("raum") String raum,
-                             @RequestParam("wasserbedarf") String wasserbedarf,
-                             @RequestParam("standort") String standort,
+                             @RequestParam("type") String type,
+                             @RequestParam("waterNeed") String waterNeed,
+                             @RequestParam("sunlight") String sunlight,
                              @RequestParam("image") MultipartFile image) throws IOException {
 
-        if (isNullOrEmpty(name) || isNullOrEmpty(art) || isNullOrEmpty(raum) || isNullOrEmpty(wasserbedarf) || isNullOrEmpty(standort)) {
+        if (isNullOrEmpty(name) || isNullOrEmpty(type) || isNullOrEmpty(waterNeed) || isNullOrEmpty(sunlight)) {
             System.out.println("Error: All fields must be filled.");
             throw new IllegalArgumentException("All fields must be filled.");
         }
@@ -52,53 +50,50 @@ public class PlantController {
 
         Plant newPlant = new Plant();
         newPlant.setName(name);
-        newPlant.setArt(art);
-        newPlant.setRaum(raum);
-        newPlant.setWasserbedarf(wasserbedarf);
-        newPlant.setStandort(standort);
+        newPlant.setType(type);
+        newPlant.setWaterNeed(waterNeed);
+        newPlant.setSunlight(sunlight);
         newPlant.setImage(image.getBytes());
 
         return plantService.createPlant(newPlant);
     }
 
     @PutMapping("/{id}")
-    public Plant updatePlant(@PathVariable Long id,
+    public Plant updatePlant(@PathVariable("id") Integer plantId,
                              @RequestParam("name") String name,
-                             @RequestParam("art") String art,
-                             @RequestParam("raum") String raum,
-                             @RequestParam("wasserbedarf") String wasserbedarf,
-                             @RequestParam("standort") String standort,
+                             @RequestParam("type") String type,
+                             @RequestParam("waterNeed") String waterNeed,
+                             @RequestParam("sunlight") String sunlight,
                              @RequestParam("image") MultipartFile image) throws IOException {
 
-        if (id == null || id <= 0) {
+        if (plantId == null || plantId <= 0) {
             System.out.println("Error: Plant ID must be valid.");
             throw new IllegalArgumentException("Plant ID must be valid.");
         }
 
-        if (isNullOrEmpty(name) || isNullOrEmpty(art) || isNullOrEmpty(raum) || isNullOrEmpty(wasserbedarf) || isNullOrEmpty(standort)) {
+        if (isNullOrEmpty(name) || isNullOrEmpty(type) || isNullOrEmpty(waterNeed) || isNullOrEmpty(sunlight)) {
             System.out.println("Error: All fields must be filled.");
             throw new IllegalArgumentException("All fields must be filled.");
         }
 
         Plant updatedPlant = new Plant();
-        updatedPlant.setId(id);
+        updatedPlant.setPlantId(plantId);
         updatedPlant.setName(name);
-        updatedPlant.setArt(art);
-        updatedPlant.setRaum(raum);
-        updatedPlant.setWasserbedarf(wasserbedarf);
-        updatedPlant.setStandort(standort);
+        updatedPlant.setType(type);
+        updatedPlant.setWaterNeed(waterNeed);
+        updatedPlant.setSunlight(sunlight);
         updatedPlant.setImage(image.getBytes());
 
-        return plantService.updatePlant(id, updatedPlant);
+        return plantService.updatePlant(plantId, updatedPlant);
     }
 
     @DeleteMapping("/{id}")
-    public void deletePlant(@PathVariable Long id) {
-        if (id == null || id <= 0) {
+    public void deletePlant(@PathVariable("id") Integer plantId) {
+        if (plantId == null || plantId <= 0) {
             System.out.println("Error: Plant ID must be valid.");
             throw new IllegalArgumentException("Plant ID must be valid.");
         }
-        plantService.deletePlant(id);
+        plantService.deletePlant(plantId);
     }
 
     private boolean isNullOrEmpty(String str) {

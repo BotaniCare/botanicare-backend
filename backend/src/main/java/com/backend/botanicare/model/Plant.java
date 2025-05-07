@@ -9,23 +9,22 @@ public class Plant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long id;
+   private int plantId;
    private String name;
-   private String art;
-   private String raum;
-   private String wasserbedarf;
-   private String standort;
+   private String type;
+   private String waterNeed;
+   private String sunlight;
 
    @Lob
     @JsonIgnore
    private byte[] image;
 
-    public Long getId() {
-        return id;
+    public Integer getPlantId() {
+        return plantId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPlantId(int plantId) {
+        this.plantId = plantId;
     }
 
     public String getName() {
@@ -36,36 +35,28 @@ public class Plant {
         this.name = name;
     }
 
-    public String getArt() {
-        return art;
+    public String getType() {
+        return type;
     }
 
-    public void setArt(String art) {
-        this.art = art;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getRaum() {
-        return raum;
+    public String getWaterNeed() {
+        return waterNeed;
     }
 
-    public void setRaum(String raum) {
-        this.raum = raum;
+    public void setWaterNeed(String waterNeed) {
+        this.waterNeed = waterNeed;
     }
 
-    public String getWasserbedarf() {
-        return wasserbedarf;
+    public String getSunlight() {
+        return sunlight;
     }
 
-    public void setWasserbedarf(String wasserbedarf) {
-        this.wasserbedarf = wasserbedarf;
-    }
-
-    public String getStandort() {
-        return standort;
-    }
-
-    public void setStandort(String standort) {
-        this.standort = standort;
+    public void setSunlight(String sunlight) {
+        this.sunlight = sunlight;
     }
 
     public byte[] getImage() {

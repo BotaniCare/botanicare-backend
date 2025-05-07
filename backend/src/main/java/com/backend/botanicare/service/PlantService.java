@@ -3,7 +3,6 @@ package com.backend.botanicare.service;
 import com.backend.botanicare.model.Plant;
 import com.backend.botanicare.repository.PlantRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +24,8 @@ public class PlantService {
         }
     }
 
-    public Plant getPlantById(Long id) {
-        Optional<Plant> plant = plantRepository.findById(id);
+    public Plant getPlantById(Integer plantId) {
+        Optional<Plant> plant = plantRepository.findById(plantId);
         return plant.orElse(null);
     }
 
@@ -34,16 +33,16 @@ public class PlantService {
         return plantRepository.save(plant);
     }
 
-    public Plant updatePlant(Long id, Plant updatedPlant) {
-        if (!plantRepository.existsById(id)) {
+    public Plant updatePlant(Integer plantId, Plant updatedPlant) {
+        if (!plantRepository.existsById(plantId)) {
             return null;
         }
-        updatedPlant.setId(id);
+        updatedPlant.setPlantId(plantId);
         return plantRepository.save(updatedPlant);
     }
 
-    public void deletePlant(Long id) {
-        plantRepository.deleteById(id);
+    public void deletePlant(Integer plantId) {
+        plantRepository.deleteById(plantId);
     }
 }
 
