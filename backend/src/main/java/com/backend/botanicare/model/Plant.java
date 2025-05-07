@@ -2,22 +2,22 @@ package com.backend.botanicare.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.Lob;
 
 @Entity
 public class Plant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private int plantId;
-   private String name;
-   private String type;
-   private String waterNeed;
-   private String sunlight;
+    private int plantId;
 
-   @Lob
+    private String name;
+    private String type;
+    private String waterNeed;
+    private String sunlight;
+
+    @OneToOne(mappedBy = "plant", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-   private byte[] image;
+    private PlantPicture plantPicture;
 
     public Integer getPlantId() {
         return plantId;
@@ -59,13 +59,11 @@ public class Plant {
         this.sunlight = sunlight;
     }
 
-    public byte[] getImage() {
-        return image;
+    public PlantPicture getPlantPicture() {
+        return plantPicture;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setPlantPicture(PlantPicture plantPicture) {
+        this.plantPicture = plantPicture;
     }
 }
-
-

@@ -1,0 +1,26 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+/Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+# Ignore OS-specific configuration files
+.DS_Store        # macOS
+Thumbs.db        # Windows
+
+# Ignore IntelliJ IDEA configuration files
+.idea/
+
+# Ignore build files and generated dependencies
+/target/         # Maven build output
+/build/          # Other build directories
+
+# Ignore log files generated during runtime
+*.log
+
+# Ignore local dependencies in Node.js, PHP, etc. projects
+/node_modules/
+/vendor/
