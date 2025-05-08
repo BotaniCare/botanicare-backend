@@ -40,15 +40,29 @@ public class PlantService {
             throw new IllegalArgumentException("The image cannot be empty");
         }
 
+        String plantName = plant.getName();
+        if (containsSQLInjection(plantName)) {
+            throw new IllegalArgumentException("The plant name contains invalid characters");
+        }
+
         Plant savedPlant = plantRepository.save(plant);
 
         PlantPicture plantPicture = new PlantPicture();
         plantPicture.setPlant(savedPlant);
         plantPicture.setPlantPicture(plantPictureData);
-
         plantPictureRepository.save(plantPicture);
 
         return savedPlant;
+    }
+
+    private boolean containsSQLInjection(String input) {
+        String[] invalidChars = {"'", "--", ";", "/*", "*/", "xp_", "char", "union", "select", "drop", "insert"};
+        for (String invalidChar : invalidChars) {
+            if (input != null && input.toLowerCase().contains(invalidChar)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Transactional

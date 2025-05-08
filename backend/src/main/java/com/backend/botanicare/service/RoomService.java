@@ -30,6 +30,10 @@ public class RoomService {
             throw new IllegalArgumentException("Room already exists");
         }
 
+        if (roomName.contains(";") || roomName.contains("'") || roomName.contains("--")) {
+            throw new IllegalArgumentException("Invalid input detected");
+        }
+
         Room room = new Room();
         room.setRoomName(roomName);
         room.setPlantIdsList(List.of());
