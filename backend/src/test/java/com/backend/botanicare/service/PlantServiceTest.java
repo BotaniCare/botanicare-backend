@@ -55,7 +55,7 @@ class PlantServiceTest {
             plantService.createPlant(plant, imageData);
         });
 
-        assertEquals("Invalid input detected in plant name", thrown.getMessage());
+        assertEquals("The plant name contains invalid characters", thrown.getMessage());
 
         System.out.println("Testing with malicious input: " + maliciousName);
     }

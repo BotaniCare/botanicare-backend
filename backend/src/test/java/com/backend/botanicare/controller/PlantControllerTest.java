@@ -40,13 +40,13 @@ class PlantControllerTest {
 
         when(plantService.createPlant(any(Plant.class), any(byte[].class))).thenReturn(mockPlant);
 
-        ResponseEntity<?> response = plantController.createPlant("Rose", "Flower", "Medium", "Full sun", mockPicture);
+        ResponseEntity<?> response = plantController.createPlant("Rose", "Flower", "Medium", "High", mockPicture);
 
         assertNotNull(response.getBody(), "The response body should not be null");
         Plant returnedPlant = (Plant) response.getBody();
         assertEquals("Rose", returnedPlant.getName());
         assertEquals("Flower", returnedPlant.getType());
         assertEquals("Medium", returnedPlant.getWaterNeed());
-        assertEquals("Full sun", returnedPlant.getSunlight());
+        assertEquals("High", returnedPlant.getSunlight());
     }
 }

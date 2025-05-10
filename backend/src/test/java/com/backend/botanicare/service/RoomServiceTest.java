@@ -67,21 +67,21 @@ public class RoomServiceTest {
     @Test
     public void testCreateRoom() {
 
-        String roomName = "Living Room";
+        String roomName = "LivingRoom";
         when(roomRepository.existsById(roomName)).thenReturn(false);
         when(roomRepository.save(any(Room.class))).thenReturn(room);
 
         Room createdRoom = roomService.createRoom(roomName);
 
         assertNotNull(createdRoom);
-        assertEquals("Living Room", createdRoom.getRoomName());
+        assertEquals("LivingRoom", createdRoom.getRoomName());
         verify(roomRepository, times(1)).save(any(Room.class));
     }
 
     @Test
     public void testCreateRoom_AlreadyExists() {
 
-        String roomName = "Living Room";
+        String roomName = "LivingRoom";
         when(roomRepository.existsById(roomName)).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> roomService.createRoom(roomName));
