@@ -1,6 +1,7 @@
 package com.backend.botanicare.service;
 
 import com.backend.botanicare.model.Room;
+import com.backend.botanicare.repository.PlantRepository;
 import com.backend.botanicare.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +12,11 @@ import java.util.List;
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final PlantRepository plantRepository;
 
-    public RoomService(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository, PlantRepository plantRepository) {
         this.roomRepository = roomRepository;
+        this.plantRepository = plantRepository;
     }
 
     public List<Room> getAllRooms() {
@@ -42,6 +45,10 @@ public class RoomService {
 
     @Transactional
     public Room addPlantToRoom(String roomName, Integer plantId) {
+        if (!plantRepository.existsById(plantId)) {
+            throw new IllegalArgumentException("Plant with ID " + plantId + " does not exist");
+        }
+
         Room room = roomRepository.findById(roomName)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found with name: " + roomName));
 
@@ -67,4 +74,3 @@ public class RoomService {
         }
     }
 }
-

@@ -2,6 +2,7 @@ package com.backend.botanicare.service;
 
 import com.backend.botanicare.model.Room;
 import com.backend.botanicare.repository.RoomRepository;
+import com.backend.botanicare.repository.PlantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -17,6 +18,9 @@ public class RoomServiceTest {
     @Mock
     private RoomRepository roomRepository;
 
+    @Mock
+    private PlantRepository plantRepository;
+
     private RoomService roomService;
 
     private Room room;
@@ -24,8 +28,7 @@ public class RoomServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        roomService = new RoomService(roomRepository);
-
+        roomService = new RoomService(roomRepository, plantRepository); // Incluir el mock de PlantRepository
         room = new Room();
         room.setRoomName("LivingRoom");
         room.setPlantIdsList(List.of(1, 2, 3));
@@ -45,7 +48,6 @@ public class RoomServiceTest {
 
     @Test
     public void testGetRoomByName() {
-        // Given
         when(roomRepository.findById("LivingRoom")).thenReturn(Optional.of(room));
 
         Room foundRoom = roomService.getRoomByName("LivingRoom");
@@ -92,6 +94,7 @@ public class RoomServiceTest {
 
         Integer plantId = 4;
         when(roomRepository.findById("LivingRoom")).thenReturn(Optional.of(room));
+        when(plantRepository.existsById(plantId)).thenReturn(true);
         when(roomRepository.save(any(Room.class))).thenReturn(room);
 
         Room updatedRoom = roomService.addPlantToRoom("LivingRoom", plantId);
@@ -114,6 +117,7 @@ public class RoomServiceTest {
 
         Integer plantId = 2;
         when(roomRepository.findById("LivingRoom")).thenReturn(Optional.of(room));
+        when(plantRepository.existsById(plantId)).thenReturn(true);
         when(roomRepository.save(any(Room.class))).thenReturn(room);
 
         Room updatedRoom = roomService.removePlantFromRoom("LivingRoom", plantId);
