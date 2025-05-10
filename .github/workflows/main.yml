@@ -1,0 +1,126 @@
+
+name: Build, Test and Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  build_application:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Check java version
+        run: java -version
+
+      - name: Install Maven 3.9.6
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+          tar xzvf apache-maven-3.9.6-bin.tar.gz
+          sudo mv apache-maven-3.9.6 /opt/
+          sudo rm -f /usr/bin/mvn
+          sudo ln -s /opt/apache-maven-3.9.6/bin/mvn /usr/bin/mvn
+
+      - name: Print Maven version
+        run: mvn -version
+
+      - name: Install Dependencies
+        run: mvn clean install
+
+      - name: Maven test
+        run: mvn test
+
+      - name: Maven build
+        run: mvn clean package
+
+      - name: Check file permissions
+        run: ls -l target/botanicare-0.0.1-SNAPSHOT.jar
+
+      - name: Verify artifact
+        run: sha256sum target/botanicare-0.0.1-SNAPSHOT.jar
+
+      - name: Upload artifact
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: botanicare-0.0.1-SNAPSHOT
+          path: target/botanicare-0.0.1-SNAPSHOT.jar
+
+  build_docker_image:
+    runs-on: ubuntu-latest
+    needs: build_application
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download artifact
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/download-artifact@v4
+        with:
+          name: botanicare-0.0.1-SNAPSHOT
+          path: ./target
+
+      - name: Verify artifact
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          ls -l target/botanicare-0.0.1-SNAPSHOT.jar
+          sha256sum target/botanicare-0.0.1-SNAPSHOT.jar
+
+      - name: Docker steps
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: echo "Build and push the docker image..."
+
+      - name: Login to Docker Hub
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
+
+      - name: Build Docker image
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker build --platform linux/amd64/v3 -t botanicare-backend-0.0.1-snapshot .
+
+      - name: Tag Docker image
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker tag botanicare-backend-0.0.1-snapshot ${{ secrets.DOCKER_USERNAME }}/botanicare-backend-0.0.1-snapshot:latest
+
+      - name: Push Docker image
+        if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/botanicare-backend-0.0.1-snapshot:latest
+
+  start_server:
+    runs-on: ubuntu-latest
+    needs: build_docker_image
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Start container
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+          HOSTNAME: ${{ secrets.AWS_PROD_INSTANCE_URL }}
+          USER_NAME: ${{secrets.AWS_INSTANCE_USER_NAME}}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/botanicare-backend-0.0.1-snapshot:latest && sudo docker rm -f botanicare-backend && sudo docker run -d -p 8443:8443 --name botanicare-backend ${{ secrets.DOCKER_USERNAME }}/botanicare-backend-0.0.1-snapshot:latest --spring.profiles.active=prod"
