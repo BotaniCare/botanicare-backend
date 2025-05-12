@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: Botanicare
+  datasource:
+    url: jdbc:postgresql://ec2-52-57-80-189.eu-central-1.compute.amazonaws.com:5432/botanicaredatabase
+    username: admin
+    password: botanicare123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
+      max-request-size: 2MB
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: geheim123
+    key-store-type: PKCS12
