@@ -2,8 +2,10 @@ package com.backend.botanicare.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 public class PlantPicture {
 
     @Id
@@ -19,27 +21,4 @@ public class PlantPicture {
     @JsonIgnore
     private byte[] plantPicture;
 
-    public Integer getPlantId() {
-        return id;
-    }
-
-    public void setPlantId(Integer id) {
-        this.id = id;
-    }
-
-    public Plant getPlant() {
-        return plant;
-    }
-
-    public void setPlant(Plant plant) {
-        this.plant = plant;
-    }
-
-    public byte[] getPlantPicture() {
-        return plantPicture;
-    }
-
-    public void setPlantPicture(byte[] plantPicture) {
-        this.plantPicture = plantPicture;
-    }
 }

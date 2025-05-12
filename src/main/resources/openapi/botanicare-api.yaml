@@ -1,15 +1,26 @@
 openapi: 3.0.0
+
 info:
   title: BotaniCare API
   description: API zur Verwaltung der Pflanzen in der BotaniCare-App.
   version: 1.0.0
+
+tags:
+  - name: Plant
+    description: All endpoints for the plant
+  - name: Room
+    description: All endpoints for the room
+
 paths:
   /plants:
     get:
-      summary: Alle Pflanzen abrufen
+      summary: Returns a list with all stored plants
+      operationId: getAllPlants
+      tags:
+        - Plant
       responses:
         '200':
-          description: Liste aller Pflanzen
+          description: List with all plants
           content:
             application/json:
               schema:
@@ -17,9 +28,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Plant'
     post:
-      summary: Eine neue Pflanze erstellen
+      summary: Add a new plant
+      operationId: addNewPlant
+      tags:
+        - Plant
       requestBody:
-        description: Die zu erstellende Pflanze
         required: true
         content:
           application/json:
@@ -27,44 +40,49 @@ paths:
               $ref: '#/components/schemas/Plant'
       responses:
         '201':
-          description: Pflanze erfolgreich erstellt
+          description: Created the plant successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Plant'
         '400':
-          description: Ungültige Anfrage
+          description: Invalid request
+        '501':
+          description: Internal server error
 
   /plants/{id}:
     get:
-      summary: Eine Pflanze nach ID abrufen
+      summary: Returns a list by its id
+      operationId: getPlantById
+      tags:
+        - Plant
       parameters:
         - name: id
           in: path
           required: true
-          description: ID der abzurufenden Pflanze
           schema:
             type: integer
       responses:
         '200':
-          description: Pflanze gefunden
+          description: Matching plant
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Plant'
         '404':
-          description: Pflanze nicht gefunden
+          description: Plant not found
     put:
-      summary: Eine bestehende Pflanze aktualisieren
+      summary: Update an existing plant
+      operationId: updatePlant
+      tags:
+        - Plant
       parameters:
         - name: id
           in: path
           required: true
-          description: ID der zu aktualisierenden Pflanze
           schema:
             type: integer
       requestBody:
-        description: Pflanze mit den aktualisierten Informationen
         required: true
         content:
           application/json:
@@ -72,32 +90,166 @@ paths:
               $ref: '#/components/schemas/Plant'
       responses:
         '200':
-          description: Pflanze erfolgreich aktualisiert
+          description: Plant was updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Plant'
-        '400':
-          description: Ungültige Anfrage
         '404':
-          description: Pflanze nicht gefunden
+          description: Plant not found
+        '501':
+          description: Internal server error
     delete:
-      summary: Eine Pflanze nach ID löschen
+      summary: Delete a plant by its id
+      operationId: deletePlantById
+      tags:
+        - Plant
       parameters:
         - name: id
           in: path
           required: true
-          description: ID der zu löschenden Pflanze
           schema:
             type: integer
       responses:
         '204':
-          description: Pflanze erfolgreich gelöscht
+          description: Plant was deleted successfully
         '404':
-          description: Pflanze nicht gefunden
+          description: Plant was not found
+        '501':
+          description: Internal server error
+
+  /rooms:
+    get:
+      operationId: getAllRooms
+      responses:
+        '200':
+          description: All rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+        '500':
+          description: Internal server error
+    post:
+      operationId: addNewRoom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+      responses:
+        '200':
+          description: The room was created
+        '500':
+          description: Internal server error
+
+  /rooms/{roomName}:
+    delete:
+      operationId: deleteRoomByRoomName
+      parameters:
+        - name: roomName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Room was deleted
+        '404':
+          description: Room not found
+        '500':
+          description: Internal server error
+    get:
+      operationId: getRoomByName
+      parameters:
+        - name: roomName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The matching room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '404':
+          description: Room not found
+        '500':
+          description: Internal server error
+
+  /rooms/{roomName}/plants/{plantId}:
+    delete:
+      operationId: removePlantFromRoom
+      parameters:
+        - name: roomName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: plantId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Plant was removed from room
+        '404':
+          description: Plant or room not found
+        '500':
+          description: Internal server error
+    get:
+      operationId: addPlantToRoom
+      parameters:
+        - name: roomName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: plantId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Plant was added to group
+        '404':
+          description: Room or plant not found
+        '500':
+          description: Internal server error
+
+
 
 components:
   schemas:
+
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+        roomName:
+          type: string
+        plants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Plant'
+
+    PlantPicture:
+      type: object
+      properties:
+        id:
+          type: integer
+        plantPicture:
+          type: string
+          format: byte
+
     Plant:
       type: object
       properties:
@@ -110,23 +262,11 @@ components:
         type:
           type: string
           description: Der Typ der Pflanze
-        location:
-          type: string
-          description: Der Standort der Pflanze
-        waterRequirement:
+        waterNeed:
           type: string
           description: Der Wasserbedarf der Pflanze
-        lightLevel:
+        sunLight:
           type: string
           description: Der Lichtbedarf der Pflanze
-        wateringDate:
-          type: string
-          format: date
-          description: Datum der letzten Bewässerung
-        wateringFrequency:
-          type: integer
-          description: Bewässerungshäufigkeit in Tagen
-        image:
-          type: string
-          format: byte
-          description: Ein Bild der Pflanze als Byte-Array (Base64-kodiert)
+        plantPicture:
+          $ref: '#/components/schemas/PlantPicture'

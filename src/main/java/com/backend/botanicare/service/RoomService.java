@@ -1,5 +1,7 @@
 package com.backend.botanicare.service;
 
+import com.backend.botanicare.exceptions.PlantNotFoundException;
+import com.backend.botanicare.exceptions.RoomNotFoundException;
 import com.backend.botanicare.model.Room;
 import com.backend.botanicare.repository.PlantRepository;
 import com.backend.botanicare.repository.RoomRepository;
@@ -24,7 +26,7 @@ public class RoomService {
     }
 
     public Room getRoomByName(String roomName) {
-        return roomRepository.findById(roomName).orElse(null);
+        return roomRepository.findById(roomName).orElseThrow(() -> new RoomNotFoundException(roomName));
     }
 
     @Transactional
@@ -46,11 +48,11 @@ public class RoomService {
     @Transactional
     public Room addPlantToRoom(String roomName, Integer plantId) {
         if (!plantRepository.existsById(plantId)) {
-            throw new IllegalArgumentException("Plant with ID " + plantId + " does not exist");
+            throw new PlantNotFoundException("Plant with ID " + plantId + " does not exist");
         }
 
         Room room = roomRepository.findById(roomName)
-                .orElseThrow(() -> new IllegalArgumentException("Room not found with name: " + roomName));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found with name: " + roomName));
 
         room.addPlantId(plantId);
         return roomRepository.save(room);
@@ -59,7 +61,7 @@ public class RoomService {
     @Transactional
     public Room removePlantFromRoom(String roomName, Integer plantId) {
         Room room = roomRepository.findById(roomName)
-                .orElseThrow(() -> new IllegalArgumentException("Room not found with name: " + roomName));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found with name: " + roomName));
 
         room.removePlantId(plantId);
         return roomRepository.save(room);
@@ -70,7 +72,7 @@ public class RoomService {
         if (roomRepository.existsById(roomName)) {
             roomRepository.deleteById(roomName);
         } else {
-            throw new IllegalArgumentException("Room not found with name: " + roomName);
+            throw new RoomNotFoundException("Room not found with name: " + roomName);
         }
     }
 }

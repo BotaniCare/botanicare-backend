@@ -1,42 +1,39 @@
 package com.backend.botanicare.controller;
 
+import com.backend.botanicare.api.PlantsApi;
+import com.backend.botanicare.mapper.PlantMapper;
 import com.backend.botanicare.model.Plant;
+import com.backend.botanicare.model.PlantDto;
 import com.backend.botanicare.service.PlantService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
-@RequestMapping("/plants")
-public class PlantController {
+@RequiredArgsConstructor
+public class PlantController implements PlantsApi {
 
     private final PlantService plantService;
 
-    public PlantController(PlantService plantService) {
-        this.plantService = plantService;
+    @Override
+    public ResponseEntity<List<PlantDto>> getAllPlants() {
+        List<Plant> plants = plantService.getAllPlants();
+        List<PlantDto> plantDtos = PlantMapper.INSTANCE.toPlantDtoList(plants);
+        return ResponseEntity.ok(plantDtos);
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllPlants() {
-        try {
-            return ResponseEntity.ok(plantService.getAllPlants());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting Plants");
-        }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getPlantById(@PathVariable("id") Integer plantId) {
+    @Override
+    public ResponseEntity<PlantDto> getPlantById(Integer plantId) {
         Plant plant = plantService.getPlantById(plantId);
-        if (plant != null) {
-            return ResponseEntity.ok(plant);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plant not found");
-        }
+        PlantDto plantDto = PlantMapper.INSTANCE.toPlantDto(plant);
+        return ResponseEntity.ok(plantDto);
     }
 
     @GetMapping("/{id}/picture")
@@ -56,7 +53,14 @@ public class PlantController {
         }
     }
 
+    @Override
+    public ResponseEntity<PlantDto> addNewPlant(PlantDto plantDto) {
+        // TODO: Should be createPlant WITHOUT any other params
+        return PlantsApi.super.addNewPlant(plantDto);
+    }
+
     @PostMapping
+    // TODO: Swap to addNewPlant
     public ResponseEntity<?> createPlant(@RequestParam("name") String name,
                                          @RequestParam("type") String type,
                                          @RequestParam("waterNeed") String waterNeed,
@@ -90,6 +94,12 @@ public class PlantController {
         }
     }
 
+    @Override
+    public ResponseEntity<PlantDto> updatePlant(Integer id, PlantDto plantDto) {
+        // TODO: Should be the old updatePlant Methode WITHOUT any other params
+        return PlantsApi.super.updatePlant(id, plantDto);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePlant(@PathVariable("id") Integer plantId,
                                          @RequestParam("name") String name,
@@ -98,6 +108,8 @@ public class PlantController {
                                          @RequestParam("sunlight") String sunlight,
                                          @RequestParam(value = "plantPicture", required = false) MultipartFile plantPicture) throws IOException {
 
+
+        // TODO: Instead of custom method you can use Objects.isNonNull (or something like that) to check this case
         if (isNullOrEmpty(name) || isNullOrEmpty(type) || isNullOrEmpty(waterNeed) || isNullOrEmpty(sunlight)) {
             return ResponseEntity.badRequest().body("All fields must be completed.");
         }
@@ -121,16 +133,13 @@ public class PlantController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePlant(@PathVariable("id") Integer plantId) {
-        try {
-            plantService.deletePlant(plantId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plant not found");
-        }
+    @Override
+    public ResponseEntity<Void> deletePlantById(Integer id) {
+        plantService.deletePlant(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    // TODO: Remove this
     private boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }

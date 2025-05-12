@@ -1,10 +1,13 @@
 package com.backend.botanicare.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
+@Data
 public class Room {
 
     @Id

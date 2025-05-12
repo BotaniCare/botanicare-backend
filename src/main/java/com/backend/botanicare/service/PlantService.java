@@ -1,37 +1,32 @@
 package com.backend.botanicare.service;
 
+import com.backend.botanicare.exceptions.PlantNotFoundException;
 import com.backend.botanicare.model.Plant;
 import com.backend.botanicare.model.PlantPicture;
 import com.backend.botanicare.repository.PlantRepository;
 import com.backend.botanicare.repository.PlantPictureRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class PlantService {
 
     private final PlantRepository plantRepository;
     private final PlantPictureRepository plantPictureRepository;
 
-    public PlantService(PlantRepository plantRepository, PlantPictureRepository plantPictureRepository) {
-        this.plantRepository = plantRepository;
-        this.plantPictureRepository = plantPictureRepository;
-    }
-
     public List<Plant> getAllPlants() {
-        try {
-            return plantRepository.findAll();
-        } catch (Exception e) {
-            System.err.println("Error in getAllPlants: " + e.getMessage());
-            throw new RuntimeException("Error getting Plants", e);
-        }
+        return plantRepository.findAll();
     }
 
     public Plant getPlantById(Integer plantId) {
         Optional<Plant> plant = plantRepository.findById(plantId);
-        return plant.orElse(null);
+        return plant.orElseThrow(() -> new PlantNotFoundException("No plant found with id " + plantId));
     }
 
     @Transactional
@@ -98,7 +93,7 @@ public class PlantService {
 
             plantRepository.deleteById(plantId);
         } else {
-            System.out.println("Plant not found, cannot be deleted.");
+            throw new PlantNotFoundException("No plant found with id " + plantId);
         }
     }
 }
