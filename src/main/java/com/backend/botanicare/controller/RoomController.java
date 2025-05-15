@@ -43,7 +43,7 @@ public class RoomController implements RoomsApi {
             throw new BadRoomNameException("Room name cannot be empty or null");
         }
 
-        Room createdRoom = roomService.createRoom(roomName);
+        roomService.createRoom(roomName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -62,7 +62,7 @@ public class RoomController implements RoomsApi {
     @Override
     public ResponseEntity<Void> deleteRoomByRoomName(String roomName) {
         roomService.deleteRoom(roomName);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

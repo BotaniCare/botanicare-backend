@@ -2,23 +2,20 @@ package com.backend.botanicare.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class PlantPicture {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
-    @OneToOne
-    @JoinColumn(name = "plant_id")
-    private Plant plant;
 
     @Lob
     @Column(name = "plant_picture")
     @JsonIgnore
     private byte[] plantPicture;
-
 }

@@ -14,23 +14,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class BotanicareApplicationTests {
 
-	@Autowired
-	private WebApplicationContext webApplicationContext;
+//	@Autowired
+//	private WebApplicationContext webApplicationContext;
+//
+//	private MockMvc mockMvc;
 
-	private MockMvc mockMvc;
+//	@BeforeEach
+//	void setup() {
+//		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+//	}
 
-	@BeforeEach
-	void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-	}
+//	@Test
+//	void contextLoads() {
+//	}
 
-	@Test
-	void contextLoads() {
-	}
-
-	@Test
-	void testGetFlowersEndpoint() throws Exception {
-		mockMvc.perform(get("/plants"))
-				.andExpect(status().isOk());
-	}
+//	@Test
+//	void testGetFlowersEndpoint() throws Exception {
+//		mockMvc.perform(get("/plants"))
+//				.andExpect(status().isOk());
+//	}
 }

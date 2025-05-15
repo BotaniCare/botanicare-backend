@@ -3,64 +3,43 @@ package com.backend.botanicare.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Data
 public class Room {
 
     @Id
-    @Column(name = "room_name")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
     private String roomName;
 
-    @Column(name = "plant_ids")
-    private String plantIds;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Plant> plants = new HashSet<>();
 
-    public Room() {}
-
-    public Room(String roomName, List<Integer> plantIdsList) {
-        this.roomName = roomName;
-        setPlantIdsList(plantIdsList);
+    public void addPlant(Plant plant) {
+        plants.add(plant);
+        plant.setRoom(this);
     }
 
-    public String getRoomName() {
-        return roomName;
+    public void removePlant(Plant plant) {
+        plants.remove(plant);
+        plant.setRoom(null);
     }
 
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return Objects.equals(id, room.id);
     }
 
-    public List<Integer> getPlantIdsList() {
-        if (plantIds == null || plantIds.isBlank()) return new ArrayList<>();
-        return Arrays.stream(plantIds.split(","))
-                .map(String::trim)
-                .map(Integer::parseInt)
-                .collect(Collectors.toList());
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
-    public void setPlantIdsList(List<Integer> plantIdsList) {
-        this.plantIds = plantIdsList.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-    }
-
-    public void addPlantId(Integer plantId) {
-        List<Integer> ids = getPlantIdsList();
-        if (!ids.contains(plantId)) {
-            ids.add(plantId);
-            setPlantIdsList(ids);
-        }
-    }
-
-    public void removePlantId(Integer plantId) {
-        List<Integer> ids = getPlantIdsList();
-        ids.remove(plantId);
-        setPlantIdsList(ids);
-    }
-
-    public String getRawPlantIds() {
-        return plantIds;
-    }
 }

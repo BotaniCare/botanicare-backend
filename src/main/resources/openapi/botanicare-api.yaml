@@ -10,6 +10,8 @@ tags:
     description: All endpoints for the plant
   - name: Room
     description: All endpoints for the room
+  - name: Device
+    description: All endpoints for the device management
 
 paths:
   /plants:
@@ -41,10 +43,6 @@ paths:
       responses:
         '201':
           description: Created the plant successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Plant'
         '400':
           description: Invalid request
         '501':
@@ -117,6 +115,97 @@ paths:
           description: Plant was not found
         '501':
           description: Internal server error
+
+  /plants/{id}/picture:
+    get:
+      summary: Returns the picture of a plant
+      operationId: getPlantPictureByPlantId
+      tags:
+        - Plant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Matching plant
+          content:
+            application/json:
+              schema:
+                type: string
+                format: byte
+        '404':
+          description: Plant not found
+
+  /plants/{id}/tasks:
+    get:
+      summary: Returns all tasks for a plant
+      operationId: getTasksOfPlant
+      tags:
+        - Plant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Matching plant
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '404':
+          description: Plant not found
+    post:
+      operationId: addTaskForPlant
+      tags:
+        - Plant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: Task added
+        '404':
+          description: Plant not found
+
+  /plants/{id}/tasks/{taskId}:
+    delete:
+      summary: Deletes a task from a plant
+      operationId: deleteTaskOfPlant
+      tags:
+        - Plant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task deleted
+        '404':
+          description: Plant not found
 
   /rooms:
     get:
@@ -224,7 +313,51 @@ paths:
         '500':
           description: Internal server error
 
+  /devices:
+    post:
+      operationId: addNewDevice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Device'
+      responses:
+        '200':
+          description: Device was added
+        '500':
+          description: Internal server error
 
+  /devices/{deviceId}:
+    get:
+      operationId: getDeviceById
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The matching device
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: Device was not found
+    delete:
+      operationId: deleteDeviceById
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device was deleted
+        '404':
+          description: Device was not found
 
 components:
   schemas:
@@ -270,3 +403,23 @@ components:
           description: Der Lichtbedarf der Pflanze
         plantPicture:
           $ref: '#/components/schemas/PlantPicture'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
+        deviceMessagingToken:
+          type: string
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string

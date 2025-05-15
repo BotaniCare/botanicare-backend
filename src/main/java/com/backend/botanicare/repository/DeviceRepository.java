@@ -1,10 +1,9 @@
 package com.backend.botanicare.repository;
 
-import com.backend.botanicare.model.Room;
+import com.backend.botanicare.model.Device;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, String> {
-    Integer deleteRoomByRoomName(String roomName);
+public interface DeviceRepository extends JpaRepository<Device, Integer> {
 }

@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PlantPictureRepository extends JpaRepository<PlantPicture, Integer> {
-    Optional<PlantPicture> findByPlant_PlantId(Integer plantId);
+    // Optional<PlantPicture> findByPlant_PlantId(Integer plantId);
 }

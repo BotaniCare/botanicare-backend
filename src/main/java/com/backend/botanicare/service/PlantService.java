@@ -1,15 +1,20 @@
 package com.backend.botanicare.service;
 
+import com.backend.botanicare.exceptions.PlantNotExistException;
 import com.backend.botanicare.exceptions.PlantNotFoundException;
+import com.backend.botanicare.exceptions.TaskNotFoundException;
 import com.backend.botanicare.model.Plant;
-import com.backend.botanicare.model.PlantPicture;
+import com.backend.botanicare.model.Task;
 import com.backend.botanicare.repository.PlantRepository;
 import com.backend.botanicare.repository.PlantPictureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -30,24 +35,15 @@ public class PlantService {
     }
 
     @Transactional
-    public Plant createPlant(Plant plant, byte[] plantPictureData) {
-        if (plantPictureData == null || plantPictureData.length == 0) {
-            throw new IllegalArgumentException("The image cannot be empty");
-        }
+    public Plant createPlant(Plant plant) {
 
         String plantName = plant.getName();
         if (containsSQLInjection(plantName)) {
             throw new IllegalArgumentException("The plant name contains invalid characters");
         }
 
-        Plant savedPlant = plantRepository.save(plant);
-
-        PlantPicture plantPicture = new PlantPicture();
-        plantPicture.setPlant(savedPlant);
-        plantPicture.setPlantPicture(plantPictureData);
-        plantPictureRepository.save(plantPicture);
-
-        return savedPlant;
+        plant.getPlantPicture().setId(null);
+        return plantRepository.save(plant);
     }
 
     private boolean containsSQLInjection(String input) {
@@ -61,39 +57,46 @@ public class PlantService {
     }
 
     @Transactional
-    public Plant updatePlant(Integer plantId, Plant updatedPlant, byte[] plantPictureData) {
+    public Plant updatePlant(Integer plantId, Plant updatedPlant) {
         if (!plantRepository.existsById(plantId)) {
-            return null;
+            throw new PlantNotExistException("No plant found with id " + plantId);
         }
 
-        updatedPlant.setPlantId(plantId);
+        updatedPlant.setId(plantId);
 
-        Plant savedPlant = plantRepository.save(updatedPlant);
-
-        if (plantPictureData != null && plantPictureData.length > 0) {
-            Optional<PlantPicture> existingPicture = plantPictureRepository.findByPlant_PlantId(plantId);
-            existingPicture.ifPresent(plantPictureRepository::delete);
-
-            PlantPicture plantPicture = new PlantPicture();
-            plantPicture.setPlant(savedPlant);
-            plantPicture.setPlantPicture(plantPictureData);
-
-            plantPictureRepository.save(plantPicture);
-        }
-
-        return savedPlant;
+        return plantRepository.save(updatedPlant);
     }
 
     @Transactional
     public void deletePlant(Integer plantId) {
         Optional<Plant> plant = plantRepository.findById(plantId);
         if (plant.isPresent()) {
-            Optional<PlantPicture> plantPicture = plantPictureRepository.findByPlant_PlantId(plantId);
-            plantPicture.ifPresent(plantPictureRepository::delete);
-
             plantRepository.deleteById(plantId);
         } else {
             throw new PlantNotFoundException("No plant found with id " + plantId);
         }
     }
+
+    public List<Task> getTasksOfPlant(Integer plantId) {
+        Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new PlantNotFoundException("No plant found with id " + plantId));
+        return plant.getTasks();
+    }
+
+    public void addTaskForPlant(Integer plantId, Task task) {
+        Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new PlantNotFoundException("No plant found with id " + plantId));
+        plant.getTasks().add(task);
+        plantRepository.save(plant);
+    }
+
+    public void deleteTaskOfPlant(Integer plantId, Integer taskId) {
+        Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new PlantNotFoundException("No plant found with id " + plantId));
+        List<Task> tasks = new ArrayList<>(plant.getTasks());
+        boolean wasRemoved = tasks.removeIf(task -> Objects.equals(task.getId(), taskId));
+        if(!wasRemoved) {
+            throw new TaskNotFoundException("No task found with id " + taskId);
+        }
+        plant.setTasks(tasks);
+        plantRepository.save(plant);
+    }
+
 }
