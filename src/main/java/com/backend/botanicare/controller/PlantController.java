@@ -8,6 +8,7 @@ import com.backend.botanicare.model.PlantDto;
 import com.backend.botanicare.model.Task;
 import com.backend.botanicare.model.TaskDto;
 import com.backend.botanicare.service.PlantService;
+import com.backend.botanicare.service.WateringService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import java.util.List;
 public class PlantController implements PlantsApi {
 
     private final PlantService plantService;
+    private final WateringService wateringService;
 
     @Override
     public ResponseEntity<List<PlantDto>> getAllPlants() {
@@ -45,7 +47,8 @@ public class PlantController implements PlantsApi {
     @Override
     public ResponseEntity<Void> addNewPlant(PlantDto plantDto) {
         Plant plant = PlantMapper.INSTANCE.toPlant(plantDto);
-        plantService.createPlant(plant);
+        Plant plantToWater = plantService.createPlant(plant);
+        wateringService.startWaterTracking(plantToWater);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
