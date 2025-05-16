@@ -2,7 +2,10 @@ package com.backend.botanicare.controller;
 
 import com.backend.botanicare.api.RoomsApi;
 import com.backend.botanicare.exceptions.BadRoomNameException;
+import com.backend.botanicare.mapper.PlantMapper;
 import com.backend.botanicare.mapper.RoomMapper;
+import com.backend.botanicare.model.Plant;
+import com.backend.botanicare.model.PlantDto;
 import com.backend.botanicare.model.Room;
 import com.backend.botanicare.model.RoomDto;
 import com.backend.botanicare.service.RoomService;
@@ -51,6 +54,13 @@ public class RoomController implements RoomsApi {
     public ResponseEntity<Void> addPlantToRoom(String roomName, Integer plantId) {
         roomService.addPlantToRoom(roomName, plantId);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<List<PlantDto>> getPlantsOfRoom(String roomName) {
+        List<Plant> plants = new ArrayList<>(roomService.getRoomByName(roomName).getPlants());
+        List<PlantDto> plantDtos = PlantMapper.INSTANCE.toPlantDtoList(plants);
+        return ResponseEntity.ok(plantDtos);
     }
 
     @Override

@@ -271,6 +271,31 @@ paths:
         '500':
           description: Internal server error
 
+  /rooms/{roomName}/plants:
+    get:
+      operationId: getPlantsOfRoom
+      tags:
+        - Room
+      parameters:
+        - name: roomName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All plants of a room
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plant'
+        '404':
+          description: Room not found
+        '500':
+          description: Internal server error
+
   /rooms/{roomName}/plants/{plantId}:
     delete:
       operationId: removePlantFromRoom
@@ -401,6 +426,8 @@ components:
         sunLight:
           type: string
           description: Der Lichtbedarf der Pflanze
+        isWatered:
+          type: boolean
         plantPicture:
           $ref: '#/components/schemas/PlantPicture'
         tasks:
