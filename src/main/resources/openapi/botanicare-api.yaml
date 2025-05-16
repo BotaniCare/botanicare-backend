@@ -401,6 +401,8 @@ components:
         sunLight:
           type: string
           description: Der Lichtbedarf der Pflanze
+        isWatered:
+          type: boolean
         plantPicture:
           $ref: '#/components/schemas/PlantPicture'
         tasks:
