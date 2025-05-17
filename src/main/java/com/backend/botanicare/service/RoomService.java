@@ -24,7 +24,7 @@ public class RoomService {
     }
 
     public Room getRoomByName(String roomName) {
-        return roomRepository.findById(roomName)
+        return roomRepository.findRoomByRoomName(roomName)
                 .orElseThrow(() -> new RoomNotFoundException(roomName));
     }
 
