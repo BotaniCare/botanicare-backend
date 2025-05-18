@@ -42,7 +42,10 @@ public class PlantService {
             throw new IllegalArgumentException("The plant name contains invalid characters");
         }
 
-        plant.getPlantPicture().setId(null);
+        if(plant.getPlantPicture() != null) {
+            plant.getPlantPicture().setId(null);
+        }
+
         return plantRepository.save(plant);
     }
 
