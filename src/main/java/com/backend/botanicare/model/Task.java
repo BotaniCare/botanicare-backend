@@ -17,4 +17,5 @@ public class Task {
     @JoinColumn(name = "plant_id")
     private Plant plant;
 
+
 }
