@@ -34,4 +34,10 @@ public class DeviceController implements DevicesApi {
         deviceService.deleteDeviceById(deviceId);
         return ResponseEntity.ok().build();
     }
+
+    @Override
+    public ResponseEntity<Void> triggerPushNotification(Integer deviceId) {
+        deviceService.triggerPushNotification(deviceId);
+        return ResponseEntity.ok().build();
+    }
 }

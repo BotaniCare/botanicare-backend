@@ -24,4 +24,11 @@ public class DeviceService {
         deviceRepository.deleteById(id);
     }
 
+    public void triggerPushNotification(Integer deviceId) {
+        Device device = deviceRepository.findById(deviceId).orElseThrow(() -> new DeviceNotFoundException("Device not found"));
+        String messagingToken = device.getDeviceMessagingToken();
+
+        // Send push notification to messaging token
+    }
+
 }
