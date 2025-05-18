@@ -5,10 +5,13 @@ import com.backend.botanicare.model.Plant;
 import com.backend.botanicare.model.WaterTracker;
 import com.backend.botanicare.repository.PlantRepository;
 import com.backend.botanicare.repository.WaterTrackerRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
@@ -27,6 +30,8 @@ public class WateringService {
 
     private final WaterTrackerRepository waterTrackerRepository;
     private final PlantRepository plantRepository;
+
+    //ToDO: notification, dass beim bearbeiten einer Pflanze das Gießdatum komplett neu berechnet wird - bereits vergangene Tage ohne gießen werden nicht mit einberechnet
 
     public void startWaterTracking(Plant plant) {
         int plantId = plant.getId();
@@ -71,6 +76,9 @@ public class WateringService {
 
         WaterTracker waterTrackerForPlant = new WaterTracker(plantId, LocalDateTime.now().plusHours((long) waterIntervalInHours));
         waterTrackerRepository.save(waterTrackerForPlant);
+
+        plant.setWaterDate(waterTrackerForPlant.getPlantWaterDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))); // nimm das waterDate der Pflanze, formatiere es und packe es in einern String
+        plantRepository.save(plant); // speichere Pflanze mit dem waterDate ind er DB
 
     }
 }

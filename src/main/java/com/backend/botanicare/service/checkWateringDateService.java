@@ -20,10 +20,7 @@ public class checkWateringDateService {
                 }
                 plantRepository.findById(plantId).ifPresent(plant -> { // wenn das aktuelle Datum nicht ind er zukunft liegt, finde die zugehörige Pflanze ind er DB
                     plant.setIsWatered(false); // setze isWatered der Pflanze auf false
-                    //ToDo überprüfen, ob ich hier updateplant verwenden muss - save aktualisiert den eintrag eigentlich nur sofern es die id schon gibt
-                    // Testen: findbyid beinhaltet schon einen save, sofern der wert verändert wird. müsste also ohne extra save/update funktionieren
-
-                    //plantRepository.save(plant);  // speichere die Pflanze in der DB
+                    plantRepository.save(plant);  // speichere die Pflanze in der DB
                 });
             }
         });

@@ -8,6 +8,7 @@ import com.backend.botanicare.model.PlantDto;
 import com.backend.botanicare.model.Task;
 import com.backend.botanicare.model.TaskDto;
 import com.backend.botanicare.service.PlantService;
+import com.backend.botanicare.service.WateringService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,13 +43,11 @@ public class PlantController implements PlantsApi {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(picture);
     }
 
-
-
+    
     @Override
     public ResponseEntity<PlantDto> updatePlant(Integer id, PlantDto plantDto) {
         Plant plant = PlantMapper.INSTANCE.toPlant(plantDto);
         Plant plantToUpdate = plantService.updatePlant(id, plant);
-        wateringService.startWaterTracking(plantToUpdate);
         return ResponseEntity.ok().build();
     }
 

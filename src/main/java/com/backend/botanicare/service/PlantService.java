@@ -24,6 +24,7 @@ public class PlantService {
 
     private final PlantRepository plantRepository;
     private final PlantPictureRepository plantPictureRepository;
+    private final WateringService wateringService;
 
     public List<Plant> getAllPlants() {
         return plantRepository.findAll();
@@ -45,7 +46,7 @@ public class PlantService {
         if(plant.getPlantPicture() != null) {
             plant.getPlantPicture().setId(null);
         }
-
+        wateringService.startWaterTracking(plant);
         return plantRepository.save(plant);
     }
 
@@ -66,7 +67,7 @@ public class PlantService {
         }
 
         updatedPlant.setId(plantId);
-
+        wateringService.startWaterTracking(updatedPlant);
         return plantRepository.save(updatedPlant);
     }
 
