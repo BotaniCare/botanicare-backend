@@ -434,6 +434,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Task'
+        waterDate:
+          type: string
+          description: Das Datum an dem die Pflanze gegossen werden muss
 
     Device:
       type: object

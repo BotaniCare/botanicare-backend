@@ -22,6 +22,7 @@ public class Plant {
     private String waterNeed;
     private String sunlight;
     private Boolean isWatered;
+    private String waterDate;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Task> tasks = new ArrayList<>();
