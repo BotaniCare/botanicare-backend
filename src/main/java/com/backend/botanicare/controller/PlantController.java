@@ -42,12 +42,7 @@ public class PlantController implements PlantsApi {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(picture);
     }
 
-    @Override
-    public ResponseEntity<Void> addNewPlant(PlantDto plantDto) {
-        Plant plant = PlantMapper.INSTANCE.toPlant(plantDto);
-        plantService.createPlant(plant);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
+
 
     @Override
     public ResponseEntity<PlantDto> updatePlant(Integer id, PlantDto plantDto) {

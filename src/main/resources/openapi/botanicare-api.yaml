@@ -29,24 +29,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Plant'
-    post:
-      summary: Add a new plant
-      operationId: addNewPlant
-      tags:
-        - Plant
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Plant'
-      responses:
-        '201':
-          description: Created the plant successfully
-        '400':
-          description: Invalid request
-        '501':
-          description: Internal server error
 
   /plants/{id}:
     get:
@@ -295,6 +277,30 @@ paths:
           description: Room not found
         '500':
           description: Internal server error
+    post:
+      summary: Add a new plant
+      operationId: addNewPlant
+      tags:
+        - Plant
+      parameters:
+        - name: roomName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plant'
+      responses:
+        '201':
+          description: Created the plant successfully
+        '400':
+          description: Invalid request
+        '501':
+          description: Internal server error
 
   /rooms/{roomName}/plants/{plantId}:
     delete:
@@ -434,6 +440,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Task'
+        waterDate:
+          type: string
+          description: Das Datum an dem die Pflanze gegossen werden muss
 
     Device:
       type: object

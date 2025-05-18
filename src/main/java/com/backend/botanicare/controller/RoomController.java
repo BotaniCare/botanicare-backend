@@ -8,6 +8,7 @@ import com.backend.botanicare.model.Plant;
 import com.backend.botanicare.model.PlantDto;
 import com.backend.botanicare.model.Room;
 import com.backend.botanicare.model.RoomDto;
+import com.backend.botanicare.service.PlantService;
 import com.backend.botanicare.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import java.util.List;
 public class RoomController implements RoomsApi {
 
     private final RoomService roomService;
+    private final PlantService plantService;
 
     @Override
     public ResponseEntity<List<RoomDto>> getAllRooms() {
@@ -47,6 +49,13 @@ public class RoomController implements RoomsApi {
         }
 
         roomService.createRoom(roomName);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Override
+    public ResponseEntity<Void> addNewPlant(String roomName, PlantDto plantDto) {
+        Plant plant = PlantMapper.INSTANCE.toPlant(plantDto);
+        plantService.createPlant(plant);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
