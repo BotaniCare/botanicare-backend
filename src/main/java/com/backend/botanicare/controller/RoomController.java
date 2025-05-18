@@ -65,7 +65,7 @@ public class RoomController implements RoomsApi {
         return ResponseEntity.ok().build();
     }
 
-    @Override
+    // override entfernt
     public ResponseEntity<List<PlantDto>> getPlantsOfRoom(String roomName) {
         List<Plant> plants = new ArrayList<>(roomService.getRoomByName(roomName).getPlants());
         List<PlantDto> plantDtos = PlantMapper.INSTANCE.toPlantDtoList(plants);
