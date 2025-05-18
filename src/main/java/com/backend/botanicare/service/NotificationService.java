@@ -31,6 +31,21 @@ public class NotificationService {
         String response = FirebaseMessaging.getInstance().send(message);
     }
 
+    public void sendTestMessage(String token) throws Exception {
+        Message message = Message.builder()
+                .setToken(token)
+                .setNotification(
+                        Notification
+                                .builder()
+                                .setTitle("Geil man")
+                                .setBody("Das ist der Beweis, dass Messages funktioniere")
+                                .build()
+                )
+                .build();
+
+        String response = FirebaseMessaging.getInstance().send(message);
+    }
+
     // TODO: Add method to iterate over all available devices
 
 }
