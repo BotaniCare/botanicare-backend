@@ -355,6 +355,10 @@ paths:
       responses:
         '200':
           description: Device was added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
         '500':
           description: Internal server error
 

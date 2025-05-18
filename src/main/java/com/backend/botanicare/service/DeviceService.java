@@ -18,8 +18,8 @@ public class DeviceService {
     private final DeviceRepository deviceRepository;
     private final NotificationService notificationService;
 
-    public void addNewDevice(Device device) {
-        deviceRepository.save(device);
+    public Device addNewDevice(Device device) {
+        return deviceRepository.save(device);
     }
 
     public Device getDeviceById(Integer id) {

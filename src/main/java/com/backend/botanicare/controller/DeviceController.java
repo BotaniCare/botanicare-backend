@@ -16,10 +16,11 @@ public class DeviceController implements DevicesApi {
     private final DeviceService deviceService;
 
     @Override
-    public ResponseEntity<Void> addNewDevice(DeviceDto deviceDto) {
+    public ResponseEntity<DeviceDto> addNewDevice(DeviceDto deviceDto) {
         Device device = DeviceMapper.INSTANCE.toDevice(deviceDto);
-        deviceService.addNewDevice(device);
-        return ResponseEntity.ok().build();
+        Device deviceNew = deviceService.addNewDevice(device);
+        DeviceDto deviceDtoNew = DeviceMapper.INSTANCE.toDeviceDto(deviceNew);
+        return ResponseEntity.ok(deviceDtoNew);
     }
 
     @Override
