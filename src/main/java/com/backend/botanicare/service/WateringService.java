@@ -28,7 +28,6 @@ public class WateringService {
     private final WaterTrackerRepository waterTrackerRepository;
     private final PlantRepository plantRepository;
 
-
     public void startWaterTracking(Plant plant) {
         int plantId = plant.getId();
         String waterNeed = plant.getWaterNeed();
@@ -68,26 +67,10 @@ public class WateringService {
         }
 
         waterIntervalInHours = waterNeedInHours * sunlightInPoints;
-
         LocalDateTime.now().plusHours((long) waterIntervalInHours);
 
-        WaterTracker waterTracker = new WaterTracker(plantId, LocalDateTime.now().plusHours((long) waterIntervalInHours));
-        waterTrackerRepository.save(waterTracker);
+        WaterTracker waterTrackerForPlant = new WaterTracker(plantId, LocalDateTime.now().plusHours((long) waterIntervalInHours));
+        waterTrackerRepository.save(waterTrackerForPlant);
 
-    }
-
-    public void hourlyWaterCheck(){
-        waterTrackerRepository.findAll().forEach(waterTracker -> {
-            int plantId = waterTracker.getPlantId();
-            if (!waterTracker.getPlantWaterDate().isAfter(LocalDateTime.now())){
-                if (!plantRepository.existsById(plantId)) {
-                    throw new PlantNotExistException("No plant found with id " + plantId);
-                }
-                plantRepository.findById(plantId).ifPresent(plant -> { // find the right plant with corresponding id from water tracker
-                    plant.setIsWatered(false); // overwrite isWatered to false
-                    plantRepository.save(plant);  // save this and overwrite existing plant in db
-                });
-            }
-        });
     }
 }

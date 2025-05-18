@@ -47,7 +47,8 @@ public class PlantController implements PlantsApi {
     @Override
     public ResponseEntity<PlantDto> updatePlant(Integer id, PlantDto plantDto) {
         Plant plant = PlantMapper.INSTANCE.toPlant(plantDto);
-        plantService.updatePlant(id, plant);
+        Plant plantToUpdate = plantService.updatePlant(id, plant);
+        wateringService.startWaterTracking(plantToUpdate);
         return ResponseEntity.ok().build();
     }
 
