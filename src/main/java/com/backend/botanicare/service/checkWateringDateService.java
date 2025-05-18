@@ -21,6 +21,7 @@ public class checkWateringDateService {
                 plantRepository.findById(plantId).ifPresent(plant -> { // wenn das aktuelle Datum nicht ind er zukunft liegt, finde die zugehörige Pflanze ind er DB
                     plant.setIsWatered(false); // setze isWatered der Pflanze auf false
                     plantRepository.save(plant);  // speichere die Pflanze in der DB
+                    // hier Methodenaufruf für push-benachrichtigung
                 });
             }
         });
