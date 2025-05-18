@@ -16,10 +16,11 @@ public class DeviceController implements DevicesApi {
     private final DeviceService deviceService;
 
     @Override
-    public ResponseEntity<Void> addNewDevice(DeviceDto deviceDto) {
+    public ResponseEntity<DeviceDto> addNewDevice(DeviceDto deviceDto) {
         Device device = DeviceMapper.INSTANCE.toDevice(deviceDto);
-        deviceService.addNewDevice(device);
-        return ResponseEntity.ok().build();
+        Device deviceNew = deviceService.addNewDevice(device);
+        DeviceDto deviceDtoNew = DeviceMapper.INSTANCE.toDeviceDto(deviceNew);
+        return ResponseEntity.ok(deviceDtoNew);
     }
 
     @Override
@@ -32,6 +33,12 @@ public class DeviceController implements DevicesApi {
     @Override
     public ResponseEntity<Void> deleteDeviceById(Integer deviceId) {
         deviceService.deleteDeviceById(deviceId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> triggerPushNotification(Integer deviceId) {
+        deviceService.triggerPushNotification(deviceId);
         return ResponseEntity.ok().build();
     }
 }

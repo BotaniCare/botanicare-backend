@@ -98,7 +98,7 @@ jobs:
 
       - name: Build Docker image
         if:  github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: docker build --platform linux/amd64/v3 -t botanicare-backend-0.0.1-snapshot .
+        run: docker build --build-arg FIREBASE_SERVICE_ACCOUNT_ARG=${{ secrets.FIREBASE_SERVICE_ACCOUNT }} --platform linux/amd64/v3 -t botanicare-backend-0.0.1-snapshot .
 
       - name: Tag Docker image
         if:  github.event_name == 'push' && github.ref == 'refs/heads/main'

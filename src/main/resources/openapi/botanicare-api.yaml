@@ -355,6 +355,10 @@ paths:
       responses:
         '200':
           description: Device was added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
         '500':
           description: Internal server error
 
@@ -387,6 +391,21 @@ paths:
       responses:
         '200':
           description: Device was deleted
+        '404':
+          description: Device was not found
+
+  /devices/{deviceId}/message:
+    get:
+      operationId: triggerPushNotification
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Message was sent to the device
         '404':
           description: Device was not found
 
